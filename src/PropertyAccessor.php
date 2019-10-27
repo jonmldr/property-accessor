@@ -7,7 +7,6 @@ namespace JonMldr\PropertyAccessor;
 use JonMldr\PropertyAccessor\AccessMethod\AccessMethodInterface;
 use JonMldr\PropertyAccessor\AccessMethod\MethodAccessMethod;
 use JonMldr\PropertyAccessor\AccessMethod\PropertyAccessMethod;
-use JonMldr\PropertyAccessor\Exception\InvalidPropertyPathSyntaxException;
 use JonMldr\PropertyAccessor\Exception\NoAccessMethodException;
 use ReflectionClass;
 use ReflectionException;
@@ -21,17 +20,10 @@ class PropertyAccessor
 
     /**
      * @throws NoAccessMethodException
-     * @throws InvalidPropertyPathSyntaxException
      */
     public function getValue(string $propertyPath, $arrayOrObject)
     {
-        if (is_object($arrayOrObject)) {
-            $parts = explode('.', $propertyPath);
-        } elseif (is_array($arrayOrObject)) {
-            $parts = $this->getArrayPropertyPathParts($propertyPath);
-        } else {
-            throw new NoAccessMethodException();
-        }
+        $parts = $this->getPropertyPathParts($propertyPath);
 
         $io = $arrayOrObject;
         foreach ($parts as $part)
@@ -52,7 +44,7 @@ class PropertyAccessor
                 return $arrayOrObject[$propertyName];
             }
 
-            throw new NoAccessMethodException(sprintf("Unable to access array key '%s'", $propertyName));
+            throw new NoAccessMethodException(sprintf("Unable to access array key '%s' on set '%s'", $propertyName, print_r($arrayOrObject, true)));
         }
 
         $class = get_class($arrayOrObject);
@@ -141,36 +133,21 @@ class PropertyAccessor
         return null;
     }
 
-    /**
-     * @throws InvalidPropertyPathSyntaxException
-     */
-    private function getArrayPropertyPathParts(string $propertyPath): array
+    private function getPropertyPathParts(string $propertyPath): array
     {
-        $syntaxCheck = preg_match(
-            '/^\[(.*)\]$/',
-            $propertyPath,
-        );
+        $parts = explode('.', $propertyPath);
 
-        if ($syntaxCheck === 0) {
-            throw new InvalidPropertyPathSyntaxException('Invalid syntax');
+        $data = [];
+        foreach ($parts as $part) {
+            $arrayParts = explode('[', $part);
+
+            foreach ($arrayParts as $arrayPart) {
+                $data[] = str_replace(['[', ']'], ['', ''], $arrayPart);
+            }
         }
 
-        preg_match_all(
-            '/\[(.*?)\]/',
-            $propertyPath,
-            $result,
-        );
-
-        if (array_key_exists(0, $result) === false) {
-            return [];
-        }
-
-        $parts = [];
-
-        foreach ($result[0] as $part) {
-            $parts[] = str_replace(['[', ']'], ['', ''], $part);
-        }
-
-        return $parts;
+        return array_filter($data, function ($key) {
+            return $key !== '';
+        });
     }
 }
