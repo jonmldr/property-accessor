@@ -11,7 +11,7 @@ use JonMldr\PropertyAccessor\PropertyAccessor;
 use JonMldr\PropertyAccessor\Test\Data\Car;
 use PHPUnit\Framework\TestCase;
 
-class PropertyAccessorTest extends TestCase
+class PropertyAccessorObjectTest extends TestCase
 {
     /**
      * @var PropertyAccessor

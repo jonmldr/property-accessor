@@ -7,6 +7,7 @@ namespace JonMldr\PropertyAccessor;
 use JonMldr\PropertyAccessor\AccessMethod\AccessMethodInterface;
 use JonMldr\PropertyAccessor\AccessMethod\MethodAccessMethod;
 use JonMldr\PropertyAccessor\AccessMethod\PropertyAccessMethod;
+use JonMldr\PropertyAccessor\Exception\InvalidPropertyPathSyntaxException;
 use JonMldr\PropertyAccessor\Exception\NoAccessMethodException;
 use ReflectionClass;
 use ReflectionException;
@@ -20,10 +21,17 @@ class PropertyAccessor
 
     /**
      * @throws NoAccessMethodException
+     * @throws InvalidPropertyPathSyntaxException
      */
     public function getValue(string $propertyPath, $arrayOrObject)
     {
-        $parts = explode('.', $propertyPath);
+        if (is_object($arrayOrObject)) {
+            $parts = explode('.', $propertyPath);
+        } elseif (is_array($arrayOrObject)) {
+            $parts = $this->getArrayPropertyPathParts($propertyPath);
+        } else {
+            throw new NoAccessMethodException();
+        }
 
         $io = $arrayOrObject;
         foreach ($parts as $part)
@@ -44,7 +52,7 @@ class PropertyAccessor
                 return $arrayOrObject[$propertyName];
             }
 
-            throw new NoAccessMethodException();
+            throw new NoAccessMethodException(sprintf("Unable to access array key '%s'", $propertyName));
         }
 
         $class = get_class($arrayOrObject);
@@ -131,5 +139,38 @@ class PropertyAccessor
         }
 
         return null;
+    }
+
+    /**
+     * @throws InvalidPropertyPathSyntaxException
+     */
+    private function getArrayPropertyPathParts(string $propertyPath): array
+    {
+        $syntaxCheck = preg_match(
+            '/^\[(.*)\]$/',
+            $propertyPath,
+        );
+
+        if ($syntaxCheck === 0) {
+            throw new InvalidPropertyPathSyntaxException('Invalid syntax');
+        }
+
+        preg_match_all(
+            '/\[(.*?)\]/',
+            $propertyPath,
+            $result,
+        );
+
+        if (array_key_exists(0, $result) === false) {
+            return [];
+        }
+
+        $parts = [];
+
+        foreach ($result[0] as $part) {
+            $parts[] = str_replace(['[', ']'], ['', ''], $part);
+        }
+
+        return $parts;
     }
 }
