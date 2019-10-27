@@ -1,2 +1,2 @@
 # property-accessor
-ProperyAccessor
+PropertyAccessor
