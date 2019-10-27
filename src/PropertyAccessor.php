@@ -77,8 +77,9 @@ class PropertyAccessor
             return null;
         }
 
-        if ($this->isPublicProperty($propertyName)) {
-            return new PropertyAccessMethod($propertyName);
+        $property = $this->findPublicProperty($propertyName);
+        if ($property !== null) {
+            return new PropertyAccessMethod($property);
         }
 
         $method = $this->findPublicMethod($propertyName);
@@ -89,16 +90,21 @@ class PropertyAccessor
         return null;
     }
 
-    private function isPublicProperty(string $propertyName): bool
+    private function findPublicProperty(string $propertyName): ?string
     {
-        try {
-            $reflectionProperty = $this->reflectionClass->getProperty($propertyName);
+        $properties = $this->reflectionClass->getProperties();
 
-            return $reflectionProperty->isPublic();
-        } catch (ReflectionException $e) {
+        foreach ($properties as $property) {
+            if (strtolower($property->getName()) !== strtolower($propertyName)) {
+                continue;
+            }
+
+            if ($property->isPublic()) {
+                return $property->getName();
+            }
         }
 
-        return false;
+        return null;
     }
 
     private function findPublicMethod(string $propertyName): ?string

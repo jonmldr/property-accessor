@@ -12,7 +12,13 @@
     "require": {
         "php": "^7.0"
     },
+    "require-dev": {
+        "phpunit/phpunit": " ^8.3"
+    },
     "autoload": {
-        "JonMldr\\PropertyAccessor\\": "src/"
+        "psr-4": {
+            "JonMldr\\PropertyAccessor\\": "src/",
+            "JonMldr\\PropertyAccessor\\Test\\": "tests/"
+        }
     }
 }
