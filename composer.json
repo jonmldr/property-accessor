@@ -1,0 +1,18 @@
+{
+    "name": "jonmldr/property-accessor",
+    "description": "PropertyAccessor",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "jonmldr",
+            "email": "jonmldr@users.noreply.github.com"
+        }
+    ],
+    "require": {
+        "php": "^7.0"
+    },
+    "autoload": {
+        "JonMldr\\PropertyAccessor\\": "src/"
+    }
+}
