@@ -6,6 +6,11 @@ or directly if the property is public.
 This library also provides a `getAccessMethod` function, which returns a implementation of the `AccessMethodInterface`.
 This function tells you how the property will be accessed.
 
+## Installation
+````
+composer require jonmldr/property-accessor
+````
+
 ## Example
 Value
 ````PHP
