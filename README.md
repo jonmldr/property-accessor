@@ -1,51 +1,32 @@
 # PropertyAccessor
 
+This PropertyAccessor allows you to access properties using getters, issers, and hassers, 
+or directly if the property is public.
+
+This library also provides a `getAccessMethod` function, which returns a implementation of the `AccessMethodInterface`.
+This function tells you how the property will be accessed.
+
 ## Example
-
+Value
 ````PHP
-<?php
-
-class Group
-{
-    /** @var Person[] | array */
-    private $persons;
-
-    (...)
-
-    public function getPersons(): array
-    {
-        return $this->persons;
-    }
-}
-
-class Person
-{
-    /** @var Vehicle[] | array */
-    public $vehicles;
-}
-
-class Vehicle
-{
-    /** @var string */
-    private $licensePlate;
-
-    (...)
-
-    public function getLicensePlate(): string
-    {
-        return $this->licensePlate;
-    }
-}
-
-$vehicle = new Vehicle('AA-11-BB');
-$person = new Person();
-$person->vehicles = [$vehicle];
-$group = new Group([$person]);
-
 $propertyAccessor = new PropertyAccessor();
-$result = $propertyAccessor->getValue('persons[0].vehicles[0].licensePlate', $group);
-// Returns 'AA-11-BB'
+// Will throw an `NoAccessMethodException` if there is no method to access the property.
+$result = $propertyAccessor->getValue('users[0].repositories[0].name', $group);
+````
 
+Access method
+````PHP
+$accessMethod = $this->propertyAccessor->getAccessMethod('licensePlate', Car::class);
+
+if ($accessMethod instanceof MethodAccessMethod) {
+    // The value wil be accessed by a method.
+    $methodName = $accessMethod->getMethodName();
+} elseif ($accessMethod instanceof ProperyAccessMethod) {
+    // The value wil be accessed by a (public) property.
+    $propertyName = $accessMethod->getPropertyName();
+} elseif ($accessMethod === null) {
+    // No access method found.
+}
 ````
 
 ## Tests
