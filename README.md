@@ -1,6 +1,6 @@
 # PropertyAccessor
 
-This PropertyAccessor allows you to access properties using getters, issers, and hassers, 
+This PropertyAccessor allows you to access properties using getters, issers, hassers, 
 or directly if the property is public.
 
 This library also provides a `getAccessMethod` function, which returns a implementation of the `AccessMethodInterface`.
