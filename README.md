@@ -16,7 +16,7 @@ Value
 ````PHP
 $propertyAccessor = new PropertyAccessor();
 // Will throw an `NoAccessMethodException` if there is no method to access the property.
-$result = $propertyAccessor->getValue('users[0].repositories[0].name', $group);
+$repositoryName = $propertyAccessor->getValue('users[0].repositories[0].name', $userGroup);
 ````
 
 Access method
