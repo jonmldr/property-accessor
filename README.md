@@ -24,10 +24,10 @@ Access method
 $accessMethod = $this->propertyAccessor->getAccessMethod('licensePlate', Car::class);
 
 if ($accessMethod instanceof MethodAccessMethod) {
-    // The value wil be accessed by a method.
+    // The value will be accessed by a method.
     $methodName = $accessMethod->getMethodName();
 } elseif ($accessMethod instanceof ProperyAccessMethod) {
-    // The value wil be accessed by a (public) property.
+    // The value will be accessed by a (public) property.
     $propertyName = $accessMethod->getPropertyName();
 } elseif ($accessMethod === null) {
     // No access method found.
